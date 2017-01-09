@@ -1,0 +1,16 @@
+{
+  "name": "datachannel",
+  "version": "1.0.0",
+  "description": "Library JS allowing fast data communication.",
+  "main": "index.js",
+  "scripts": {
+  	"start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.14.0",
+    "ws": "~1.1.1"
+  },
+  "author": "Jonathan Delefortrie",
+  "license": "ISC"
+}

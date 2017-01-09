@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8>
+    <script src=js/datachannel.js></script>
+    <title>WebSocket / WebRTC - DataChannel</title>
+</head>
+    <body style=margin:0;padding:0>
+        <div id=log style=position:fixed;z-index:1></div>
+        <script>
+
+        (function() {
+
+            // DataChannel
+            const datachannel = new DataChannel({
+                // Please add your IP here
+                socket: "ws://0.0.0.0:8080",
+                // Enable logging
+                debug: false
+            });
+
+            // Error
+            datachannel.onerror = function(error) {
+                log.innerHTML += "<p>error: "+error+"</p>";
+            };
+
+            // Open
+            datachannel.onopen = function(event) {
+                const id = event.target._id;
+                log.innerHTML += "<p>open " + id + "</p>";
+                event.target.send(JSON.stringify({ type: "message", message: "Hello you!" }));
+            };
+
+            // Close
+            datachannel.onclose = function(event) {
+                const id = event.target._id;
+                log.innerHTML += "<p>close " + id + "</p>";
+            };
+
+            // Message
+            datachannel.onmessage = function(event) {
+                const id = event.target._id;
+                const data = JSON.parse(event.data);
+
+                switch(data.type) {
+                    case "message": log.innerHTML += "<p>" + data.message + " from " + id + "</p>"; break;
+                }
+            };
+
+            // Broadcast
+            function broadcast(data) {
+                const connections = datachannel.connections;
+                Object.keys(connections).forEach(function(item) {
+                    const elt = connections[item];
+                    if(elt.channel && elt.channel.readyState === "open") elt.channel.send(JSON.stringify(data));
+                });
+            }
+
+            setTimeout(broadcast, 2000, { type: "message", message: "Hello everyone!" });
+
+            // Unload
+            window.addEventListener('unload', () => {
+            }, false);
+
+            // Load
+            window.addEventListener('load', () => {
+            }, false);
+
+        })();
+
+        </script>
+    </body>
+</html>
